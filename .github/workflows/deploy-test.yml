@@ -23,6 +23,15 @@ jobs:
           ENV_NAME: ${{ env.ENVIRONMENT_NAME }}
         run: echo $ENV_NAME
 
+      - name: Set environment variables
+        run: |
+          for s in $(jq -r ".${ENV_NAME}|to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" env.json); do
+            echo $s >> $GITHUB_ENV
+          done
+
+      - name: Print environment variable
+        run: printenv | grep -E '^TEST_VALUE|^PARAM' | sort
+
       - name: create tag
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
