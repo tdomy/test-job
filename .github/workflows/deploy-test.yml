@@ -7,16 +7,21 @@ on:
       - main
 
 env:
-  ENVIRONMENT_NAME: ${{ (github.ref == 'refs/heads/develop' && 'develop') || ((github.ref == 'ref/heads/main' && 'production') || 'staging') }}
+  ENVIRONMENT_NAME: ${{ (github.ref == 'refs/heads/develop' && 'development') || ((github.ref == 'refs/heads/main' && 'production') || 'staging') }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: ${{ (github.ref == 'refs/heads/develop' && 'develop') || ((github.ref == 'ref/heads/main' && 'production') || 'staging') }}
+    environment: ${{ (github.ref == 'refs/heads/develop' && 'development') || ((github.ref == 'refs/heads/main' && 'production') || 'staging') }}
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: print env
+        env:
+          ENV_NAME: ${{ env.ENVIRONMENT_NAME }}
+        run: echo $ENV_NAME
 
       - name: create tag
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -24,21 +29,6 @@ jobs:
           echo "v1-$(TZ=Asia/Tokyo date +%Y%m%d-%H%M%S)" > TAG_NAME
           git tag $(cat TAG_NAME)
           git push origin $(cat TAG_NAME)
-
-      - name: print ref
-        env:
-          GITHUB_REF: ${{ github.ref }}
-        run: echo $GITHUB_REF
-
-      - name: print event name
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-        run: echo $GITHUB_EVENT_NAME
-
-      - name: print env
-        env:
-          ENV_NAME: ${{ env.ENVIRONMENT_NAME }}
-        run: echo $ENV_NAME
 
       - name: print secret
         run: echo ${{ secrets.ACCESS_KEY }}
