@@ -17,7 +17,18 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Print
-        run: echo job2
+      - run: git fetch origin ${{ github.base_ref }} --depth=1
+
+      - name: Diff
+        id: diff
+        run: echo "::set-output name=changed::$(git diff --name-only origin/${{ github.base_ref }} HEAD | grep -e ^app/ -e ^tests/ | wc -l)"
+
+      - name: Print1
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        run: echo job2-1
+
+      - name: Print2
+        if: ${{ steps.diff.outputs.changed != '0' }}
+        run: echo job2-2
