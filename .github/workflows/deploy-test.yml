@@ -1,0 +1,26 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - develop
+      - release/*
+    tags:
+      - v*
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: print ref
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: echo $GITHUB_REF
+
+      - name: print event name
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: echo $GITHUB_EVENT_NAME
