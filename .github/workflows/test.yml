@@ -1,0 +1,23 @@
+name: test
+on: [pull_request]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Print
+        run: echo job1
+  
+  job2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Print
+        run: echo job2
