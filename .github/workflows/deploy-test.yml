@@ -24,6 +24,8 @@ jobs:
         run: echo $ENV_NAME
 
       - name: Set environment variables
+        env:
+          ENV_NAME: ${{ env.ENVIRONMENT_NAME }}
         run: |
           for s in $(jq -r ".${ENV_NAME}|to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" env.json); do
             echo $s >> $GITHUB_ENV
