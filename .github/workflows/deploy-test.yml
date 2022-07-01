@@ -11,6 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    environment: ${{ (github.ref == 'refs/heads/develop' && 'develop') || ((startsWith('refs/heads/release', github.ref) && 'staging') || 'production') }}
 
     steps:
       - uses: actions/checkout@v3
@@ -24,3 +25,11 @@ jobs:
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: echo $GITHUB_EVENT_NAME
+
+      - name: print env
+        env:
+          ENV_NAME: ${{ (github.ref == 'refs/heads/develop' && 'develop') || ((startsWith('refs/heads/release', github.ref) && 'staging') || 'production') }}
+        run: echo $ENV_NAME
+
+      - name: print secret
+        run: echo ${{ secrets.ACCESS_KEY }}
