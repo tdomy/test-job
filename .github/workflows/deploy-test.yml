@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  ENVIRONMENT_NAME: (github.ref == 'refs/heads/develop' && 'develop') || ((github.ref == 'ref/heads/main' && 'production') || 'staging')
+  ENVIRONMENT_NAME: ${{ (github.ref == 'refs/heads/develop' && 'develop') || ((github.ref == 'ref/heads/main' && 'production') || 'staging') }}
 
 jobs:
   deploy:
