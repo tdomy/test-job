@@ -1,6 +1,9 @@
 name: test
 on: [pull_request]
 
+env:
+  ENV_NAME: ${{ (github.base_ref == 'refs/heads/develop' && 'dev') || 'prod' }}
+
 jobs:
   job1:
     runs-on: ubuntu-latest
@@ -18,6 +21,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: set secret for dev
+        if: ${{ env.ENV_NAME == 'dev' }}
+        env:
+          DEV_ACCESS_KEY: ${{ secrets.DEV_ACCESS_KEY }}
+        run: |
+          echo "env | $ENV_NAME"
+          echo ACCESS_KEY=${DEV_ACCESS_KEY} >> $GITHUB_ENV
+
+      - name: set secret for prod
+        if: ${{ env.ENV_NAME != 'dev' }}
+        env:
+          PROD_ACCESS_KEY: ${{ secrets.PROD_ACCESS_KEY }}
+        run: |
+          echo "env | $ENV_NAME"
+          echo ACCESS_KEY=${PROD_ACCESS_KEY} >> $GITHUB_ENV
+
+      - name: echo dummy secret
+        run: echo "key $ACCESS_KEY"
 
       - run: git fetch origin ${{ github.base_ref }} --depth=1
 
